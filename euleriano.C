@@ -22,27 +22,54 @@ typedef struct vert{
 }Vertice;
 
 
+
+void imprimeGrafo(Vertice G[], int ordem);
+void criaGrafo(Vertice **G, int ordem);
+int  acrescentaAresta(Vertice G[], int ordem, int v1, int v2);
+int  calcumaTamanho(Vertice G[], int ordem);
+void percorreGrafo(Vertice G[], int vInicial, int ordem);
+
+
 typedef struct queue{
     int vector[MAX_QUEUE];
     int front;
     int back;
+    int tam;
 }Queue;
 
 void initializeEmpty(Queue *f);
 int isEmpty(Queue f);
 void enqueue(Queue *f, int elem);
 int dequeue(Queue *f);
-void imprimeGrafo(Vertice G[], int ordem);
-void criaGrafo(Vertice **G, int ordem);
-int  acrescentaAresta(Vertice G[], int ordem, int v1, int v2);
-int  calcumaTamanho(Vertice G[], int ordem);
-void initializeEmpty(Queue *f);
-int isEmpty(Queue f);
-void enqueue(Queue *f, int elem);
-int dequeue(Queue *f);
-void percorreGrafo(Vertice G[], int vInicial, int ordem);
 
+void initializeEmpty(Queue *f){
+    f->front= f->back= 0;
+}
+int isEmpty(Queue f){
+    return f.back == f.front;
+}
 
+void enqueue(Queue *Q, int elem){ 
+     if(Q->tam==MAX_QUEUE){
+        printf("cheia");
+        exit(0);
+        }else{
+              Q->vector[Q->back]=elem;
+              Q->back++;
+              Q->tam++;
+        }
+     }
+int dequeue(Queue *Q){
+     if(Q->back==0){
+        printf("vazia");
+        exit(0);
+     }
+     else{
+        Q->vector[Q->front]=0;
+        Q->front++;
+    }                              
+ }
+ 
 void criaGrafo(Vertice **G, int ordem){
 	int i;
 	*G= (Vertice*) malloc(sizeof(Vertice)*ordem);
@@ -97,17 +124,29 @@ void imprimeGrafo(Vertice G[], int ordem){
 	printf("\n\n");
 }
 
-void percorreGrafo(Vertice G[], int vInicial, int ordem){
-	for (int i=0; i<ordem; i++){
-		G[i].cor = BRANCO;
-		}
-	G[vInicial].cor	= CINZA;
-	for (int i=0; i<ordem; i++){
-		
-		printf("vertice %3d\n", G[i].nome);
-		printf("cor %3d\n", G[i].cor);
+void percorreGrafo(Vertice G[], int vInicial, int ordem){			
+	int i;					
+	Queue *q = (Queue*) malloc(sizeof(Queue));	
+	q->front = NULL;		
+	q->back = NULL;
+	
+    for (i=0; i<ordem; i++){
+		int j;
+		Aresta *aux= G[i].prim;
+		for(j=0; aux != NULL; aux= aux->prox, j++);
+	    	G[j].cor = BRANCO;	
+	}
+	
+    G[vInicial].cor = CINZA;
+    enqueue(q, G[vInicial].nome);
+    while(q != NULL){
+	     dequeue(q);
+	
+		printf("vertice %3d\n", G[vInicial].nome);
+		printf("cor %3d\n", G[vInicial].cor);
 		}
 }
+
 
 int main(int argc, char *argv[]) {
 	Vertice *G;
