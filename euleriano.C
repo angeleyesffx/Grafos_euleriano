@@ -8,7 +8,6 @@
 #define BRANCO 0
 #define CINZA  1
 #define PRETO  2
-#define MAX_QUEUE  100
 
 typedef struct aresta{
 	int nome;
@@ -31,7 +30,7 @@ void percorreGrafo(Vertice G[], int vInicial, int ordem);
 
 
 typedef struct queue{
-    int vector[MAX_QUEUE];
+    int vector[MAX_FILA];
     int front;
     int back;
     int tam;
@@ -42,32 +41,31 @@ int isEmpty(Queue f);
 void enqueue(Queue *f, int elem);
 int dequeue(Queue *f);
 
-void initializeEmpty(Queue *f){
-    f->front= f->back= 0;
+void initializeEmpty(Queue *Q){
+    Q->front = Q->back= 0;
 }
-int isEmpty(Queue f){
-    return f.back == f.front;
+int isEmpty(Queue Q){
+    return Q.back == Q.front;
 }
 
 void enqueue(Queue *Q, int elem){ 
-     if(Q->tam==MAX_QUEUE){
-        printf("cheia");
-        exit(0);
-        }else{
-              Q->vector[Q->back]=elem;
-              Q->back++;
-              Q->tam++;
-        }
+     Q->vector[Q->back] = elem;
+     Q->back += 1;
+     if(Q->back == MAX_FILA) {
+        Q->back = 0;
      }
+}
 int dequeue(Queue *Q){
-     if(Q->back==0){
-        printf("vazia");
-        exit(0);
-     }
-     else{
-        Q->vector[Q->front]=0;
-        Q->front++;
-    }                              
+	if(Q->front == Q->back) {
+       printf("fila vazia.\n");
+       exit(1);
+    }
+    int back = Q->vector[Q->front];
+    Q->front += 1;
+    if(Q->front == MAX_FILA) {
+       Q->front = 0;
+    }
+    return back;              
  }
  
 void criaGrafo(Vertice **G, int ordem){
@@ -139,10 +137,11 @@ void percorreGrafo(Vertice G[], int vInicial, int ordem){
 	
     G[vInicial].cor = CINZA;
     enqueue(q, G[vInicial].nome);
-    while(q != NULL){
-	     dequeue(q);
-	
-		printf("vertice %3d\n", G[vInicial].nome);
+    while(q != 0){
+	    dequeue(q);
+	    int i=0;
+	    i++;
+		printf(" %d vertice %3d\n", i,q->back);
 		printf("cor %3d\n", G[vInicial].cor);
 		}
 }
