@@ -57,7 +57,6 @@ void enqueue(Queue *Q, int elem){
 }
 int dequeue(Queue *Q){
 	if(Q->front == Q->back) {
-       printf("fila vazia.\n");
        exit(1);
     }
     int back = Q->vector[Q->front];
@@ -121,37 +120,38 @@ void imprimeGrafo(Vertice G[], int ordem){
 	}
 	printf("\n\n");
 }
-
-void percorreGrafo(Vertice G[], int vInicial, int ordem){			
-	int i;					
+    
+void percorreGrafo(Vertice G[], int vInicial){			
+	int i,j, u;					
 	Queue *q = (Queue*) malloc(sizeof(Queue));	
 	q->front = NULL;		
 	q->back = NULL;
-	
-    for (i=0; i<ordem; i++){
-		int j;
-		Aresta *aux= G[i].prim;
-		for(j=0; aux != NULL; aux= aux->prox, j++);
-	    	G[j].cor = BRANCO;	
-	}
-	
-    G[vInicial].cor = CINZA;
-    enqueue(q, G[vInicial].nome);
-    while(q != 0){
-	    dequeue(q);
-	    int i=0;
-	    i++;
-		printf(" %d vertice %3d\n", i,q->back);
-		printf("cor %3d\n", G[vInicial].cor);
-		}
+	u = vInicial;
+	Aresta *aux= G[u].prim;
+	for(i=0; aux != NULL; aux = aux->prox, i++){
+	    G[u].cor = BRANCO;	 
+		printf("FIRST G[%d] vertice Adjacente %3d cor %3d\n", G[u].nome, aux->nome, G[u].cor);
+	    G[u].cor = CINZA;
+	    enqueue(q, G[u].nome);
+	    while(q != NULL){
+		    u = dequeue(q);
+		    aux= G[u].prim;
+		    printf("U um %d\n", u);
+	    	for(j=0; aux != NULL; aux= aux->prox, j++){
+	    		printf(" G[%d] vertice Adjacente %3d cor %3d\n", G[u].nome, aux->nome, G[u].cor);
+		        G[u].cor = CINZA;
+				enqueue(q, aux->nome); 
+	        } 
+             G[u].cor = PRETO;
+        }
+    }
 }
 
 
 int main(int argc, char *argv[]) {
 	Vertice *G;
 	int ordemG= 10;
-
-		
+	
 	criaGrafo(&G, ordemG);
 	acrescentaAresta(G,ordemG,3,4);
 	acrescentaAresta(G,ordemG,4,2);
@@ -162,6 +162,6 @@ int main(int argc, char *argv[]) {
 	printf("\nTamanho: %d\n",calcumaTamanho(G, ordemG));
 
 	imprimeGrafo(G, ordemG);
-    percorreGrafo(G, 1, ordemG);
+    percorreGrafo(G, 2);
 	return 0;
 }
