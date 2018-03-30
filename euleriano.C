@@ -127,16 +127,15 @@ int verificaConexo(Vertice G[], int ordem){
 	for (i=0; i<ordem; i++){
 		Aresta *aux= G[i].prim;
 		for( ; aux != NULL; aux= aux->prox){
-	    	printf("G[%d] cor %3d\n", aux->nome, G[i].cor);
+	    	printf("G[%d] cor %3d i = %d\n", aux->nome, G[i].cor,i);
 	    	if(G[i].cor == 0){
 	    	   printf("\nGrafo nao conexo\n");
 	    	   return 0;
-	    	}else{
-	    	   printf("\nGrafo conexo\n");	
-	    	   return 1;
 			}
 		}
 	}
+	printf("\nGrafo conexo\n");	
+    return 1;
 }
 
 int percorreGrafo(Vertice G[], int vInicial){			
