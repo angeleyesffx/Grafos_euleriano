@@ -56,10 +56,11 @@ void enqueue(Queue *Q, int elem){
      }
 }
 int dequeue(Queue *Q){
+	int back;
 	if(Q->front == Q->back) {
        exit(1);
     }
-    int back = Q->vector[Q->front];
+    back = Q->vector[Q->front];
     Q->front += 1;
     if(Q->front == MAX_FILA) {
        Q->front = 0;
@@ -120,39 +121,58 @@ void imprimeGrafo(Vertice G[], int ordem){
 	}
 	printf("\n\n");
 }
-    
-void percorreGrafo(Vertice G[], int vInicial){			
+
+int verificaConexo(Vertice G[], int ordem){
+	int i;  
+	for (i=0; i<ordem; i++){
+		Aresta *aux= G[i].prim;
+		for( ; aux != NULL; aux= aux->prox){
+	    	printf("G[%d] cor %3d\n", aux->nome, G[i].cor);
+	    	if(G[i].cor == 0){
+	    	   printf("\nGrafo nao conexo\n");
+	    	   return 0;
+	    	}else{
+	    	   printf("\nGrafo conexo\n");	
+	    	   return 1;
+			}
+		}
+	}
+}
+
+int percorreGrafo(Vertice G[], int vInicial){			
 	int i,j, u;					
 	Queue *q = (Queue*) malloc(sizeof(Queue));	
 	q->front = NULL;		
 	q->back = NULL;
 	u = vInicial;
 	Aresta *aux= G[u].prim;
-	for(i=0; aux != NULL; aux = aux->prox, i++){
-	    G[u].cor = BRANCO;	 
-		printf("FIRST G[%d] vertice Adjacente %3d cor %3d\n", G[u].nome, aux->nome, G[u].cor);
-	    G[u].cor = CINZA;
-	    enqueue(q, G[u].nome);
-	    while(q != NULL){
-		    u = dequeue(q);
-		    aux= G[u].prim;
-		    printf("U um %d\n", u);
-	    	for(j=0; aux != NULL; aux= aux->prox, j++){
-	    		printf(" G[%d] vertice Adjacente %3d cor %3d\n", G[u].nome, aux->nome, G[u].cor);
-		        G[u].cor = CINZA;
-				enqueue(q, aux->nome); 
-	        } 
-             G[u].cor = PRETO;
-        }
-    }
+    for (i=0; i<10; i++){
+		Aresta *aux2= G[i].prim;
+		for( ; aux2 != NULL; aux2= aux2->prox){
+		    G[i].cor = BRANCO;
+	     }
+	}  
+    G[u].cor = CINZA;
+    enqueue(q, G[u].nome);
+    while(isEmpty(*q)!=1){
+        u = dequeue(q);
+	   	for(j=0; aux != NULL; aux= aux->prox, j++){
+    	    if (G[aux->nome].cor == BRANCO) {
+    	        G[u].cor = CINZA;
+		    	enqueue(q, aux->nome);
+	    	}
+	    }
+	    aux= G[u].prim;	        
+        G[u].cor = PRETO;
+    }       	        
 }
-
 
 int main(int argc, char *argv[]) {
 	Vertice *G;
 	int ordemG= 10;
 	
 	criaGrafo(&G, ordemG);
+	acrescentaAresta(G,ordemG,1,6);
 	acrescentaAresta(G,ordemG,3,4);
 	acrescentaAresta(G,ordemG,4,2);
 	acrescentaAresta(G,ordemG,5,4);
@@ -162,6 +182,7 @@ int main(int argc, char *argv[]) {
 	printf("\nTamanho: %d\n",calcumaTamanho(G, ordemG));
 
 	imprimeGrafo(G, ordemG);
-    percorreGrafo(G, 2);
+    percorreGrafo(G, 2);	
+    verificaConexo(G, ordemG);
 	return 0;
 }
